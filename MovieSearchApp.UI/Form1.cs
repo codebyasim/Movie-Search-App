@@ -8,6 +8,8 @@ public partial class Form1 : Form
     private Button clearButton;
     private Label titleLabel;
 
+    private DataGridView movieGrid;
+
     public Form1()
     {
         InitializeComponent();
@@ -73,11 +75,40 @@ public partial class Form1 : Form
             searchBy.SelectedIndex = 0;
         };
 
+        // Movie results table
+        movieGrid = new DataGridView();
+
+        movieGrid.Location = new Point(100, 210);
+        movieGrid.Width = 840;
+        movieGrid.Height = 300;
+
+        movieGrid.AutoSizeColumnsMode =
+            DataGridViewAutoSizeColumnsMode.AllCells;
+
+        movieGrid.ScrollBars = ScrollBars.Both;
+
+        movieGrid.ReadOnly = true;
+        movieGrid.AllowUserToAddRows = false;
+
+        movieGrid.Columns.Add("Title", "Title");
+        movieGrid.Columns.Add("Overview", "Overview");
+        movieGrid.Columns.Add("Genre", "Genre");
+        movieGrid.Columns.Add("ReleaseDate", "Release Date");
+        movieGrid.Columns.Add("Runtime", "Runtime");
+        movieGrid.Columns.Add("Budget", "Budget");
+        movieGrid.Columns.Add("Revenue", "Revenue");
+        movieGrid.Columns.Add("Actors", "Actors");
+        movieGrid.Columns.Add("Director", "Director");
+        movieGrid.Columns.Add("Producer", "Producer");
+
+
         // Add controls
         Controls.Add(titleLabel);
         Controls.Add(searchBox);
         Controls.Add(searchBy);
         Controls.Add(searchButton);
         Controls.Add(clearButton);
+        Controls.Add(movieGrid);
     }
+
 }
