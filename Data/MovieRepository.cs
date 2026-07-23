@@ -36,5 +36,69 @@ namespace MovieSearchApp.Data
 
             cmd.ExecuteNonQuery();
         }
+
+            // GET ALL MOVIES FROM SQLITE
+        public static List<Movie> GetAllMovies()
+        {
+            List<Movie> movies = new List<Movie>();
+
+            using var connection =
+                new SqliteConnection(ConnectionString);
+
+            connection.Open();
+
+            string sql = "SELECT * FROM Movies";
+
+            using var command =
+                new SqliteCommand(sql, connection);
+
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Movie movie = new Movie
+                {
+                    MovieId = Convert.ToInt32(reader["MovieId"]),
+
+                    Title =
+                        reader["Title"].ToString() ?? "",
+
+                    Overview =
+                        reader["Overview"].ToString() ?? "",
+
+                    Genre =
+                        reader["Genre"].ToString() ?? "",
+
+                    ReleaseDate = DateTime.Parse(
+                        reader["ReleaseDate"].ToString() ?? ""
+                    ),
+
+                    Runtime =
+                        Convert.ToInt32(reader["Runtime"]),
+
+                    Budget =
+                        Convert.ToDecimal(reader["Budget"]),
+
+                    Revenue =
+                        Convert.ToDecimal(reader["Revenue"]),
+
+                    Poster =
+                        reader["Poster"].ToString() ?? "",
+
+                    Actors =
+                        reader["Actors"].ToString() ?? "",
+
+                    Director =
+                        reader["Director"].ToString() ?? "",
+
+                    Producer =
+                        reader["Producer"].ToString() ?? ""
+                };
+
+                movies.Add(movie);
+            }
+
+            return movies;
+        }
     }
 }

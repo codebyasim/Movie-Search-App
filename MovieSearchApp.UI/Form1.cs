@@ -1,3 +1,6 @@
+using MovieSearchApp.Data;
+using MovieSearchApp.Models;
+
 namespace MovieSearchApp.UI;
 
 public partial class Form1 : Form
@@ -61,6 +64,7 @@ public partial class Form1 : Form
         searchButton.Width = 100;
         searchButton.Height = 30;
         searchButton.Location = new Point(740, 118);
+        searchButton.Click += SearchButton_Click;
 
         // Clear button
         clearButton = new Button();
@@ -101,6 +105,12 @@ public partial class Form1 : Form
         movieGrid.Columns.Add("Director", "Director");
         movieGrid.Columns.Add("Producer", "Producer");
 
+        movieGrid.EnableHeadersVisualStyles = false;
+
+        searchBy.SelectedIndexChanged += (sender, e) =>
+    {
+        HighlightSelectedColumn();
+    };  
 
         // Add controls
         Controls.Add(titleLabel);
@@ -111,4 +121,116 @@ public partial class Form1 : Form
         Controls.Add(movieGrid);
     }
 
+    private void SearchButton_Click(object? sender, EventArgs e)
+{
+    string search = searchBox.Text.Trim();
+    string filter = searchBy.SelectedItem?.ToString() ?? "Title";
+
+    List<Movie> movies = MovieRepository.GetAllMovies();
+
+    List<Movie> results = filter switch
+    {
+        "Title" => movies.Where(m =>
+            m.Title.Contains(search,
+            StringComparison.OrdinalIgnoreCase)).ToList(),
+
+        "Overview" => movies.Where(m =>
+            m.Overview.Contains(search,
+            StringComparison.OrdinalIgnoreCase)).ToList(),
+
+        "Genre" => movies.Where(m =>
+            m.Genre.Contains(search,
+            StringComparison.OrdinalIgnoreCase)).ToList(),
+
+        "Release Date" => movies.Where(m =>
+            m.ReleaseDate.Year.ToString().Contains(search)).ToList(),
+
+        "Runtime" => movies.Where(m =>
+            m.Runtime.ToString().Contains(search)).ToList(),
+
+        "Budget" => movies.Where(m =>
+            m.Budget.ToString().Contains(search)).ToList(),
+
+        "Revenue Generated" => movies.Where(m =>
+            m.Revenue.ToString().Contains(search)).ToList(),
+
+        "Actors" => movies.Where(m =>
+            m.Actors.Contains(search,
+            StringComparison.OrdinalIgnoreCase)).ToList(),
+
+        "Director" => movies.Where(m =>
+            m.Director.Contains(search,
+            StringComparison.OrdinalIgnoreCase)).ToList(),
+
+        "Producer" => movies.Where(m =>
+            m.Producer.Contains(search,
+            StringComparison.OrdinalIgnoreCase)).ToList(),
+
+        _ => new List<Movie>()
+    };
+
+    movieGrid.Rows.Clear();
+
+    foreach (Movie movie in results)
+    {
+        movieGrid.Rows.Add(
+            movie.Title,
+            movie.Overview,
+            movie.Genre,
+            movie.ReleaseDate.ToString("dd/MM/yyyy"),
+            movie.Runtime,
+            $"${movie.Budget:N0}",
+            $"${movie.Revenue:N0}",
+            movie.Actors,
+            movie.Director,
+            movie.Producer
+        );
+    }
+
+    if (results.Count == 0)
+    {
+        MessageBox.Show("No movies found.");
+    }
+
+}
+
+   private void HighlightSelectedColumn()
+{
+    string selected = searchBy.SelectedItem?.ToString() ?? "Title";
+
+    string columnName = selected switch
+    {
+        "Title" => "Title",
+        "Overview" => "Overview",
+        "Genre" => "Genre",
+        "Release Date" => "ReleaseDate",
+        "Runtime" => "Runtime",
+        "Budget" => "Budget",
+        "Revenue Generated" => "Revenue",
+        "Actors" => "Actors",
+        "Director" => "Director",
+        "Producer" => "Producer",
+        _ => "Title"
+    };
+
+    // Hide all 10 columns
+    foreach (DataGridViewColumn column in movieGrid.Columns)
+    {
+        column.Visible = false;
+    }
+
+    // Show only selected column
+    if (movieGrid.Columns.Contains(columnName))
+    {
+        movieGrid.Columns[columnName].Visible = true;
+
+        // Make selected column fill the table
+        movieGrid.Columns[columnName].AutoSizeMode =
+            DataGridViewAutoSizeColumnMode.Fill;
+
+        // Highlight header
+        movieGrid.Columns[columnName].HeaderCell.Style.BackColor =
+            Color.Yellow;
+    }
+}
 }

@@ -78,10 +78,10 @@ List<Movie> movies = new List<Movie>
     }
 };
 
-    foreach (Movie movie in movies)
-    {
-    MovieRepository.InsertMovie(movie);
-    }
+    // foreach (Movie movie in movies)
+    // {
+    // MovieRepository.InsertMovie(movie);
+    // }
 
 Console.WriteLine("=== Movie Search Application ===");
 Console.WriteLine("1. Search by Title");
