@@ -1,18 +1,21 @@
 using MovieSearchApp.Data;
 using MovieSearchApp.Models;
+using MovieSearchApp.Services;
+using System.Linq;
 
 namespace MovieSearchApp.UI;
 
 public partial class Form1 : Form
-{
+{   
+    // Global variables
     private TextBox searchBox;
     private ComboBox searchBy;
     private Button searchButton;
     private Button clearButton;
     private Label titleLabel;
-
     private DataGridView movieGrid;
 
+    // Constructor
     public Form1()
     {
         InitializeComponent();
@@ -23,25 +26,26 @@ public partial class Form1 : Form
         Height = 700;
         StartPosition = FormStartPosition.CenterScreen;
 
-        // Title
+        // Create Title Label
         titleLabel = new Label();
         titleLabel.Text = "MOVIE SEARCH DATABASE";
         titleLabel.Font = new Font("Arial", 22, FontStyle.Bold);
         titleLabel.AutoSize = true;
         titleLabel.Location = new Point(300, 40);
 
-        // Search box
+        // Create TextBox
         searchBox = new TextBox();
         searchBox.PlaceholderText = "Enter your search...";
         searchBox.Width = 400;
         searchBox.Location = new Point(100, 120);
 
-        // Search filter
+        // cretae comboBox
         searchBy = new ComboBox();
         searchBy.Width = 200;
         searchBy.Location = new Point(520, 120);
         searchBy.DropDownStyle = ComboBoxStyle.DropDownList;
 
+        // Add search options by range
         searchBy.Items.AddRange(new string[]
         {
             "Title",
@@ -58,7 +62,7 @@ public partial class Form1 : Form
 
         searchBy.SelectedIndex = 0;
 
-        // Search button
+        // Create new  button
         searchButton = new Button();
         searchButton.Text = "Search";
         searchButton.Width = 100;
@@ -66,7 +70,7 @@ public partial class Form1 : Form
         searchButton.Location = new Point(740, 118);
         searchButton.Click += SearchButton_Click;
 
-        // Clear button
+        // Clear new clear button
         clearButton = new Button();
         clearButton.Text = "Clear";
         clearButton.Width = 100;
@@ -79,7 +83,7 @@ public partial class Form1 : Form
             searchBy.SelectedIndex = 0;
         };
 
-        // Movie results table
+        // Create DataGridView
         movieGrid = new DataGridView();
 
         movieGrid.Location = new Point(100, 210);
@@ -121,8 +125,10 @@ public partial class Form1 : Form
         Controls.Add(movieGrid);
     }
 
-    private void SearchButton_Click(object? sender, EventArgs e)
-{
+    // Method 1
+    private async void SearchButton_Click(object? sender, EventArgs e)
+{       
+
     string search = searchBox.Text.Trim();
     string filter = searchBy.SelectedItem?.ToString() ?? "Title";
 
@@ -169,6 +175,42 @@ public partial class Form1 : Form
         _ => new List<Movie>()
     };
 
+    //
+    if (results.Count == 0)
+{
+    var service = new TMDBService();
+
+    TMDBResponse response =
+        await service.SearchMovieAsync(search);
+
+    movieGrid.Rows.Clear();
+
+    foreach (TMDBMovie movie in response.Results)
+    {
+         TMDBMovieDetails details =
+        await service.GetMovieDetailsAsync(movie.Id);
+
+        movieGrid.Rows.Add(
+            movie.Title,
+            movie.Overview,
+             string.Join(", ", details.Genres.Select(g => g.Name)),
+            movie.ReleaseDate,
+            details.Runtime,
+            $"${details.Budget:N0}",
+            $"${details.Revenue:N0}",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+    }
+
+    return;
+}
+
     movieGrid.Rows.Clear();
 
     foreach (Movie movie in results)
@@ -194,6 +236,7 @@ public partial class Form1 : Form
 
 }
 
+    //Method 2
    private void HighlightSelectedColumn()
 {
     string selected = searchBy.SelectedItem?.ToString() ?? "Title";
