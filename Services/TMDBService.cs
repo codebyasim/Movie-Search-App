@@ -36,5 +36,18 @@ namespace MovieSearchApp.Services
 
             return details ?? new TMDBMovieDetails();
         }
+        // Method 3
+        public async Task<TMDBCredits> GetMovieCreditsAsync(int movieId)
+        {
+            string url =
+                $"https://api.themoviedb.org/3/movie/{movieId}/credits?api_key={ApiKey}";
+
+            string json = await client.GetStringAsync(url);
+
+            TMDBCredits? credits =
+                JsonSerializer.Deserialize<TMDBCredits>(json);
+
+            return credits ?? new TMDBCredits();
+        }
     }
 }

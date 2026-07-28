@@ -188,7 +188,19 @@ public partial class Form1 : Form
     foreach (TMDBMovie movie in response.Results)
     {
          TMDBMovieDetails details =
-        await service.GetMovieDetailsAsync(movie.Id);
+            await service.GetMovieDetailsAsync(movie.Id);
+
+        TMDBCredits credits =
+            await service.GetMovieCreditsAsync(movie.Id);
+
+        string actors = string.Join(", ",
+            credits.Cast.Take(5).Select(c => c.Name));
+
+        string director = credits.Crew
+            .FirstOrDefault(c => c.Job == "Director")?.Name ?? "";
+
+        string producer = credits.Crew
+            .FirstOrDefault(c => c.Job == "Producer")?.Name ?? "";
 
         movieGrid.Rows.Add(
             movie.Title,
@@ -198,13 +210,9 @@ public partial class Form1 : Form
             details.Runtime,
             $"${details.Budget:N0}",
             $"${details.Revenue:N0}",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
+            actors,
+            director,
+            producer
         );
     }
 
