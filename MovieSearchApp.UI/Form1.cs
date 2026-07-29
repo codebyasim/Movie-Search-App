@@ -14,6 +14,7 @@ public partial class Form1 : Form
     private Button clearButton;
     private Label titleLabel;
     private DataGridView movieGrid;
+    private PictureBox posterBox;
 
     // Constructor
     public Form1()
@@ -22,8 +23,8 @@ public partial class Form1 : Form
 
         // Window
         Text = "Movie Search Database";
-        Width = 1000;
-        Height = 700;
+        Width = 1350;
+        Height = 900;
         StartPosition = FormStartPosition.CenterScreen;
 
         // Create Title Label
@@ -98,6 +99,8 @@ public partial class Form1 : Form
         movieGrid.ReadOnly = true;
         movieGrid.AllowUserToAddRows = false;
 
+        movieGrid.CellClick += MovieGrid_CellClick;
+
         movieGrid.Columns.Add("Title", "Title");
         movieGrid.Columns.Add("Overview", "Overview");
         movieGrid.Columns.Add("Genre", "Genre");
@@ -116,6 +119,15 @@ public partial class Form1 : Form
         HighlightSelectedColumn();
     };  
 
+        // Movie poster
+        posterBox = new PictureBox();
+
+        posterBox.Location = new Point(1100, 210);
+        posterBox.Size = new Size(500, 500);
+
+        posterBox.SizeMode = PictureBoxSizeMode.Zoom;
+        posterBox.BorderStyle = BorderStyle.FixedSingle;
+
         // Add controls
         Controls.Add(titleLabel);
         Controls.Add(searchBox);
@@ -123,6 +135,7 @@ public partial class Form1 : Form
         Controls.Add(searchButton);
         Controls.Add(clearButton);
         Controls.Add(movieGrid);
+        Controls.Add(posterBox);
     }
 
     // Method 1
@@ -202,7 +215,9 @@ public partial class Form1 : Form
         string producer = credits.Crew
             .FirstOrDefault(c => c.Job == "Producer")?.Name ?? "";
 
-        movieGrid.Rows.Add(
+
+        //movieGrid.Rows.Add(
+            int rowIndex = movieGrid.Rows.Add(
             movie.Title,
             movie.Overview,
              string.Join(", ", details.Genres.Select(g => g.Name)),
@@ -214,6 +229,8 @@ public partial class Form1 : Form
             director,
             producer
         );
+
+        movieGrid.Rows[rowIndex].Tag = movie.PosterPath;
     }
 
     return;
@@ -242,9 +259,26 @@ public partial class Form1 : Form
         MessageBox.Show("No movies found.");
     }
 
+}   
+    // Method 2
+    private void MovieGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
+{
+    if (e.RowIndex < 0)
+        return;
+
+    string? posterPath =
+        movieGrid.Rows[e.RowIndex].Tag?.ToString();
+
+    if (!string.IsNullOrEmpty(posterPath))
+    {
+        string posterUrl =
+            "https://image.tmdb.org/t/p/w500" + posterPath;
+
+        posterBox.LoadAsync(posterUrl);
+    }
 }
 
-    //Method 2
+    //Method 3
    private void HighlightSelectedColumn()
 {
     string selected = searchBy.SelectedItem?.ToString() ?? "Title";
