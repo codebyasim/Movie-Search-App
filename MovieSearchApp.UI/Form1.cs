@@ -22,14 +22,14 @@ public partial class Form1 : Form
         InitializeComponent();
 
         // Window
-        Text = "Movie Search Database";
+        Text = "Movie Database Presentation Tool ";
         Width = 1350;
         Height = 900;
         StartPosition = FormStartPosition.CenterScreen;
 
         // Create Title Label
         titleLabel = new Label();
-        titleLabel.Text = "MOVIE SEARCH DATABASE";
+        titleLabel.Text = "MOVIE DATABASE PRESENTATION TOOL";
         titleLabel.Font = new Font("Arial", 22, FontStyle.Bold);
         titleLabel.AutoSize = true;
         titleLabel.Location = new Point(300, 40);
