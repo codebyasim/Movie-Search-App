@@ -139,3 +139,4 @@ BSc Software Engineering student at Manchester Metropolitan University
 *Built as a practical software engineering project to explore desktop development, data persistence, and external API integration.*
 
 **Data attribution:** Movie information and imagery are provided by [The Movie Database (TMDB)](https://www.themoviedb.org/). This project is not endorsed or certified by TMDB.
+    
