@@ -9,6 +9,18 @@ A C# desktop application that brings movie information into one place, combining
 [![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![API](https://img.shields.io/badge/Integration-TMDB-01B4E4)](https://developer.themoviedb.org/)
 
+
+## 📸 Application Screenshots
+
+### Main Application
+![Main Screen](screenshots/main-screenshot.png)
+
+### Movie Overview
+![Movie Overview](screenshots/movie-overview.png)
+
+### Movie Release Date
+![Movie Release Date](screenshots/movie-releasedate.png)
+
 ## 📌 The Problem
 
 Finding movie information often means searching across multiple websites to discover a film's genre, cast, director, runtime, budget, and revenue.
